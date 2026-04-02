@@ -1,0 +1,10 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+django-filter
+django-cors-headers
+PyJWT
+pytz
+sqlparse
+python-dotenv
+drf-spectacular
