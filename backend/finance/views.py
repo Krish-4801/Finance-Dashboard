@@ -44,6 +44,12 @@ class FinancialsView(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated, IsAdmin]
         return [permission() for permission in permission_classes]
     
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user, updated_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+    
     @extend_schema(
             summary="Restore a deleted record",
             description="Admin only: Restore a previously soft-deleted financial record back to active status.",
@@ -67,7 +73,7 @@ class FinancialsView(viewsets.ModelViewSet):
         description="Admin only: Permanently remove a record from the database. This action cannot be undone.",
         responses={204: OpenApiResponse(description='Record permanently deleted.')}
     )
-    @action(detail=False, methods=['delete'], permission_classes=[IsAuthenticated, IsAdmin])
+    @action(detail=True, methods=['delete'], permission_classes=[IsAuthenticated, IsAdmin])
     def hard_del(self, request, pk=None):
         record = get_object_or_404(Financials.all_objects, pk=pk)
         record.hard_delete()

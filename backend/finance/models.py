@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 class ActiveFinanceMngr(models.Manager):
     def get_queryset(self):
@@ -21,6 +22,9 @@ class Financials(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,related_name="created_financials")
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="updated_financials")
+
     objects = ActiveFinanceMngr()
     all_objects = models.Manager()
 
@@ -33,7 +37,7 @@ class Financials(models.Model):
         self.save(update_fields=['is_deleted', 'deleted_at'])
 
     def hard_delete(self, *args, **kwargs):
-        super().delete(self, *args, **kwargs)
+        super().delete(*args, **kwargs)
 
     def restore(self):
         self.is_deleted = False

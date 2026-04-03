@@ -5,6 +5,8 @@ from finance.models import Financials
 class DashboardService:
     @staticmethod
     def get_dashboard_data(start_date=None, end_date=None, recents=5):
+        if recents:
+            recents = int(recents)
         # date filter
         queryset = Financials.objects.all()
         if start_date:

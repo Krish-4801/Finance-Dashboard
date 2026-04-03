@@ -3,10 +3,12 @@ from datetime import date
 from .models import Financials
 
 class FinanceSerializer(serializers.ModelSerializer):
+    created_by_username = serializers.CharField(source='created_by.username', read_only=True)
+    updated_by_username = serializers.CharField(source='updated_by.username', read_only=True)
     class Meta:
         model = Financials
-        fields = ['id', 'amount', 'type', 'category', 'date', 'description', 'created_at', 'updated_at', 'is_deleted', 'deleted_at']
-        read_only_fields = ['id', 'created_at', 'updated_at', 'is_deleted', 'deleted_at']
+        fields = ['id', 'amount', 'type', 'category', 'date', 'description', 'created_at', 'updated_at', 'is_deleted', 'deleted_at', 'created_by_username', 'updated_by_username']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'is_deleted', 'deleted_at', 'created_by_username', 'updated_by_username']
     
     def validate_amount(self, value):
         if value<0:
