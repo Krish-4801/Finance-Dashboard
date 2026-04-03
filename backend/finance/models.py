@@ -5,6 +5,11 @@ from django.conf import settings
 class ActiveFinanceMngr(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_deleted=False)
+    
+    def for_user(self, user):
+        if user.is_authenticated and user.role=='ADMIN':
+            return Financials.all_objects.all()
+        return self.get_queryset()
 
 # Create your models here.
 class Financials(models.Model):

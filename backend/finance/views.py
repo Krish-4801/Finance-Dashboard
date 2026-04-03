@@ -1,5 +1,8 @@
+import csv
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -13,9 +16,6 @@ from .filters import FinanceFilter
 
 # Create your views here.
 class FinancialsView(viewsets.ModelViewSet):
-    queryset = Financials.objects.all().order_by('-date', '-created_at')
-    allqueryset = Financials.all_objects.all().order_by('-date', '-created_at')
-
     serializer_class = FinanceSerializer
 
     filter_backends = [
@@ -25,17 +25,13 @@ class FinancialsView(viewsets.ModelViewSet):
     ]
 
     filterset_class = FinanceFilter
-
     search_fields = ['category', 'description']
 
     ordering_fields = ['amount', 'date', 'created_at']
     ordering = ['-date', '-created_at']
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated and user.role == 'ADMIN':
-            return self.allqueryset
-        return self.queryset
+        return Financials.objects.for_user(self.request.user)
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -78,3 +74,23 @@ class FinancialsView(viewsets.ModelViewSet):
         record = get_object_or_404(Financials.all_objects, pk=pk)
         record.hard_delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class FinancialExportCSVView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+    def get(self, request, *args, **kwargs):
+        queryset = Financials.objects.for_user(request.user).order_by('-date', '-created_at')
+        filtered_qs = FinanceFilter(request.GET, queryset=queryset).qs
+        data = FinanceSerializer(filtered_qs, many=True).data
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="financials.csv"'
+
+        writer = csv.writer(response)
+        if data:
+            writer.writerow(data[0].keys())
+            for item in data:
+                writer.writerow(item.values())
+
+        return response
+
