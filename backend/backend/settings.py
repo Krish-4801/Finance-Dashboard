@@ -47,6 +47,12 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_THROTTLE_CLASSES": [
+    "users.throttles.ViewerRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "viewer": "10/min"
+    },
 }
 
 SIMPLE_JWT = {

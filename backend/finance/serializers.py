@@ -5,8 +5,8 @@ from .models import Financials
 class FinanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Financials
-        fields = ['id', 'amount', 'type', 'category', 'date', 'description', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ['id', 'amount', 'type', 'category', 'date', 'description', 'created_at', 'updated_at', 'is_deleted', 'deleted_at']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'is_deleted', 'deleted_at']
     
     def validate_amount(self, value):
         if value<0:
