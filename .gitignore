@@ -89,3 +89,4 @@ local_settings.py
 # Sqlite
 db.sqlite3
 db.sqlite3-journal
+.env

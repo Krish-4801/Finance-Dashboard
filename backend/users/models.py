@@ -9,6 +9,7 @@ class CustomUser(AbstractUser):
         VIEWER = 'VIEWER', 'Viewer'
     
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.VIEWER)
+    email = models.EmailField(unique=True)
     
 
     def __str__(self):
