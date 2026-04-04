@@ -1,10 +1,11 @@
 from django.shortcuts import render
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
 from .services import DashboardService
-from .serializers import DashboardSerializer
+from .serializers import DashboardSerializer, DashboardResponseSerializer
 
 # Create your views here.
 
@@ -16,7 +17,7 @@ class DashboardView(APIView):
             OpenApiParameter(name='end_date', description='Format: YYYY-MM-DD', required=False, type=str),
             OpenApiParameter(name='recents', description='Number', required=False, type=int),
         ],
-        responses={200:dict}
+        responses={200: DashboardResponseSerializer}
     )
     def get(self, request):
         serializer = DashboardSerializer(data=request.query_params)
