@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
-        user = self.get_object
+        user = self.get_object()
         user.is_active = not user.is_active
         user.save()
         return Response({"status": f"User is now {'active' if user.is_active else 'inactive'}"})

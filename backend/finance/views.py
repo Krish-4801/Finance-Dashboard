@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 
 from users.permissions import IsAdmin, IsAnalyst
 from .models import Financials
@@ -78,6 +78,26 @@ class FinancialsView(viewsets.ModelViewSet):
 
 class FinancialExportCSVView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
+    # ['type', 'category', 'start_date', 'end_date']
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name='type', description='string', required=False, type=str, enum=['INCOME', 'EXPENSE']),
+            OpenApiParameter(name='category', description='string', required=False, type=str),
+            OpenApiParameter(name='start_date', description='Format: YYYY-MM-DD', required=False, type=str),
+            OpenApiParameter(name='end_date', description='Format: YYYY-MM-DD', required=False, type=str)
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="CSV File Download",
+                response={
+                    "text/csv": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                }
+            )
+        }
+    )
     def get(self, request, *args, **kwargs):
         queryset = Financials.objects.for_user(request.user).order_by('-date', '-created_at')
         filtered_qs = FinanceFilter(request.GET, queryset=queryset).qs

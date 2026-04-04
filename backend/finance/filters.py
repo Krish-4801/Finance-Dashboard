@@ -7,6 +7,6 @@ class FinanceFilter(django_filters.FilterSet):
 
     category = django_filters.CharFilter(field_name='category', lookup_expr='iexact')
 
-    class meta:
+    class Meta:
         model = Financials
         fields = ['type', 'category', 'start_date', 'end_date']
