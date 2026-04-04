@@ -11,7 +11,7 @@ class FinanceSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at', 'is_deleted', 'deleted_at', 'created_by_username', 'updated_by_username']
     
     def validate_amount(self, value):
-        if value<0:
+        if value<=0:
             raise serializers.ValidationError("Amount must be greater than zero")
         return value
     

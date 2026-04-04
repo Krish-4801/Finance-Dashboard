@@ -45,6 +45,10 @@ class FinancialsView(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.updated_by = self.request.user
+        instance.delete(user=self.request.user)
     
     @extend_schema(
             summary="Restore a deleted record",
@@ -61,7 +65,7 @@ class FinancialsView(viewsets.ModelViewSet):
         if not record.is_deleted:
             return Response({"detail": "This record is not deleted."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            record.restore()
+            record.restore(request.user)
         return Response({"detail": "Record restored successfully."}, status=status.HTTP_200_OK)
     
     @extend_schema(
@@ -110,6 +114,12 @@ class FinancialExportCSVView(APIView):
         if data:
             writer.writerow(data[0].keys())
             for item in data:
+                row = []
+                for key, value in item.items():
+                    if key=='amount':
+                        row.append(float(value))
+                    else:
+                        row.append(value)
                 writer.writerow(item.values())
 
         return response

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .serializers import UserSerializer, UserCreateSerializer
@@ -12,6 +12,9 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     permission_classes = [IsAuthenticated, IsAdmin]
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['username', 'email']
 
     def get_serializer_class(self):
         if self.action=='create':

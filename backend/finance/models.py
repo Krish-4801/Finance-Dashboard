@@ -36,17 +36,26 @@ class Financials(models.Model):
     def __str__(self):
         return f'{self.date} - {self.type} - {self.category}: ${self.amount}'
     
-    def delete(self, using = None, keep_parents = None):
+    def delete(self, using = None, keep_parents = None, **kwargs):
+        user = kwargs.get('user')
         self.is_deleted = True
         self.deleted_at = timezone.now()
-        self.save(update_fields=['is_deleted', 'deleted_at'])
+        self.updated_at = timezone.now()
+        if user:
+            self.updated_by = user
+        update_fields = ['is_deleted', 'deleted_at', 'updated_at']
+        if user:
+            update_fields.append('updated_by')
+        self.save(update_fields=update_fields)
 
     def hard_delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
 
-    def restore(self):
+    def restore(self, user):
         self.is_deleted = False
         self.deleted_at = None
-        self.save(update_fields=['is_deleted', 'deleted_at'])
+        self.updated_at = timezone.now()
+        self.updated_by = user
+        self.save(update_fields=['is_deleted', 'deleted_at', 'updated_at'])
 
     
