@@ -157,6 +157,24 @@ Once the server is running:
 * `POST /api/finance/records/{id}/restore/` → Restore *(Admin only)*
 * `DELETE /api/finance/records/{id}/hard_del/` → Permanent delete *(Admin only)*
 * `GET /api/finance/downloads/` → Export records as CSV
+### 📥 Download Records (CSV Export)
+
+* `GET /api/finance/downloads/`
+
+Provides:
+
+* Exported CSV of filtered financial records
+
+Supports query params:
+
+* `start_date` (YYYY-MM-DD)
+* `end_date` (YYYY-MM-DD)
+* `category`
+* `type` (income/expense)
+
+---
+
+
 
 ---
 
