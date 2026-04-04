@@ -120,7 +120,7 @@ class FinancialExportCSVView(APIView):
                         row.append(float(value))
                     else:
                         row.append(value)
-                writer.writerow(item.values())
+                writer.writerow(row)
 
         return response
 

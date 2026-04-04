@@ -56,6 +56,6 @@ class Financials(models.Model):
         self.deleted_at = None
         self.updated_at = timezone.now()
         self.updated_by = user
-        self.save(update_fields=['is_deleted', 'deleted_at', 'updated_at'])
+        self.save(update_fields=['is_deleted', 'deleted_at', 'updated_at', 'updated_by'])
 
     
